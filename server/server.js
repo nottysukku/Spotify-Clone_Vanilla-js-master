@@ -13,7 +13,9 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Update static file serving
+// Update static file serving configuration
+app.use('/covers', express.static(path.join(__dirname, '../public/covers')));
+app.use('/songs', express.static(path.join(__dirname, '../public/songs')));
 app.use(express.static(path.join(__dirname, '../public')));
 
 const pool = new Pool({
@@ -41,10 +43,16 @@ app.get('/api/health', (req, res) => {
 // Get all albums
 app.get('/api/albums', async (req, res) => {
     try {
-        const result = await pool.query(`
-            SELECT * FROM albums
-        `);
-        res.json(result.rows);
+        const result = await pool.query(`SELECT * FROM albums`);
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+        
+        // Add absolute URLs to the cover images
+        const albums = result.rows.map(album => ({
+            ...album,
+            cover_url: `${baseUrl}${album.cover_url}`
+        }));
+        
+        res.json(albums);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

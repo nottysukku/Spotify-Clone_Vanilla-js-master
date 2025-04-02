@@ -83,11 +83,6 @@ async function displayAlbums() {
         cardContainer.innerHTML = "";
         
         for (const album of albums) {
-            // Ensure cover_url is absolute
-            const coverUrl = album.cover_url.startsWith('http') ? 
-                           album.cover_url : 
-                           `http://localhost:3000${album.cover_url}`;
-            
             cardContainer.innerHTML += `
                 <div data-album-id="${album.id}" class="card">
                     <div class="play">
@@ -97,7 +92,8 @@ async function displayAlbums() {
                                 stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <img src="${coverUrl}" alt="${album.title}" onerror="this.src='img/default-album.png'">
+                    <img src="${album.cover_url}" alt="${album.title}" 
+                         onerror="this.onerror=null; this.src='img/music.svg';">
                     <h2>${album.title}</h2>
                     <p>${album.description}</p>
                 </div>`;
