@@ -5,11 +5,12 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-// Update CORS configuration
+// Update CORS configuration for production
 app.use(cors({
-    origin: '*',
+    origin: process.env.FRONTEND_URL || '*', // Replace with your frontend URL in production
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type']
+    allowedHeaders: ['Content-Type'],
+    credentials: true
 }));
 app.use(express.json());
 
@@ -21,7 +22,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false // You might want to set this to true in production with proper SSL certificates
     }
 });
 
@@ -44,16 +45,16 @@ app.get('/api/health', (req, res) => {
 app.get('/api/albums', async (req, res) => {
     try {
         const result = await pool.query(`SELECT * FROM albums`);
-        const baseUrl = `${req.protocol}://${req.get('host')}`;
+        const baseUrl = process.env.AWS_ASSETS_URL || `${req.protocol}://${req.get('host')}`;
         
-        // Add absolute URLs to the cover images
         const albums = result.rows.map(album => ({
             ...album,
-            cover_url: `${baseUrl}${album.cover_url}`
+            cover_url: `${baseUrl}/${album.cover_url.replace('public/', '')}`
         }));
         
         res.json(albums);
     } catch (err) {
+        console.error('Error in /api/albums:', err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -71,7 +72,8 @@ app.get('/api/albums/:albumId/songs', async (req, res) => {
     }
 });
 
+// Update port configuration for cloud deployment
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
 });

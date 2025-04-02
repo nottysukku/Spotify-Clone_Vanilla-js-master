@@ -76,13 +76,16 @@ const playMusic = (track, pause = false) => {
 
 async function displayAlbums() {
     try {
+        console.log('Fetching albums...');
         const response = await fetch('http://localhost:3000/api/albums');
         const albums = await response.json();
+        console.log('Received albums:', albums);
         
         let cardContainer = document.querySelector(".cardContainer");
         cardContainer.innerHTML = "";
         
         for (const album of albums) {
+            console.log(`Creating card for album: ${album.title}, cover URL: ${album.cover_url}`);
             cardContainer.innerHTML += `
                 <div data-album-id="${album.id}" class="card">
                     <div class="play">
@@ -92,12 +95,21 @@ async function displayAlbums() {
                                 stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <img src="${album.cover_url}" alt="${album.title}" 
-                         onerror="this.onerror=null; this.src='img/music.svg';">
+                    <img src="${album.cover_url}" 
+                         alt="${album.title}" 
+                         onload="console.log('Image loaded successfully:', this.src)"
+                         onerror="console.error('Failed to load image:', this.src); this.src='img/music.svg';">
                     <h2>${album.title}</h2>
                     <p>${album.description}</p>
                 </div>`;
         }
+
+        // After all cards are created, add additional image load monitoring
+        document.querySelectorAll('.card img').forEach(img => {
+            console.log('Monitoring image:', img.src);
+            img.addEventListener('load', () => console.log('Image loaded via event listener:', img.src));
+            img.addEventListener('error', () => console.error('Image failed via event listener:', img.src));
+        });
         
         // Add click handlers to cards
         Array.from(document.getElementsByClassName("card")).forEach(e => { 
@@ -110,7 +122,7 @@ async function displayAlbums() {
             });
         });
     } catch (error) {
-        console.error("Error loading albums:", error);
+        console.error("Error in displayAlbums:", error);
         document.querySelector(".cardContainer").innerHTML = "<p>Error loading albums</p>";
     }
 }
