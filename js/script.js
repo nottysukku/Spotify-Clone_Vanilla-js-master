@@ -20,15 +20,16 @@ async function getSongs(albumId) {
     try {
         const response = await fetch(`http://localhost:3000/api/albums/${albumId}/songs`);
         const songs = await response.json();
-        console.log(songs)
-        // Show all the songs in the playlist
+        console.log("Fetched songs:", songs);
+        
         let songUL = document.querySelector(".songList").getElementsByTagName("ul")[0]
         songUL.innerHTML = ""
         for (const song of songs) {
-            songUL.innerHTML += `<li>
+            const songTitle = song.title || decodeURI(song.file_url.split('/').pop().replace(/\.[^/.]+$/, ""));
+            songUL.innerHTML += `<li data-songurl="${song.file_url}">
                 <img class="invert" width="34" src="img/music.svg" alt="">
                 <div class="info">
-                    <div>${song.title}</div>
+                    <div>${songTitle}</div>
                 </div>
                 <div class="playnow">
                     <span>Play Now</span>
@@ -37,10 +38,13 @@ async function getSongs(albumId) {
             </li>`;
         }
 
-        // Attach an event listener to each song
-        Array.from(document.querySelector(".songList").getElementsByTagName("li")).forEach((e, index) => {
+        // Update click handlers for songs
+        Array.from(document.querySelector(".songList").getElementsByTagName("li")).forEach(e => {
             e.addEventListener("click", () => {
-                playMusic(songs[index].file_url);
+                const songUrl = e.dataset.songurl;
+                if (songUrl) {
+                    playMusic(songUrl);
+                }
             });
         });
 
@@ -52,12 +56,21 @@ async function getSongs(albumId) {
 }
 
 const playMusic = (track, pause = false) => {
+    // Add error handling for audio loading
+    currentSong.onerror = (e) => {
+        console.error("Error loading audio:", e);
+        document.querySelector(".songinfo").innerHTML = "Error loading audio file";
+    };
+
     currentSong.src = track;
     if (!pause) {
-        currentSong.play();
+        currentSong.play().catch(e => {
+            console.error("Error playing audio:", e);
+            play.src = "img/play.svg";
+        });
         play.src = "img/pause.svg";
     }
-    document.querySelector(".songinfo").innerHTML = decodeURI(track);
+    document.querySelector(".songinfo").innerHTML = decodeURI(track.split('/').pop());
     document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
 }
 
@@ -70,6 +83,11 @@ async function displayAlbums() {
         cardContainer.innerHTML = "";
         
         for (const album of albums) {
+            // Ensure cover_url is absolute
+            const coverUrl = album.cover_url.startsWith('http') ? 
+                           album.cover_url : 
+                           `http://localhost:3000${album.cover_url}`;
+            
             cardContainer.innerHTML += `
                 <div data-album-id="${album.id}" class="card">
                     <div class="play">
@@ -79,7 +97,7 @@ async function displayAlbums() {
                                 stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <img src="${album.cover_url}" alt="">
+                    <img src="${coverUrl}" alt="${album.title}" onerror="this.src='img/default-album.png'">
                     <h2>${album.title}</h2>
                     <p>${album.description}</p>
                 </div>`;

@@ -1,11 +1,20 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+// Update CORS configuration
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
+
+// Update static file serving
+app.use(express.static(path.join(__dirname, '../public')));
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,

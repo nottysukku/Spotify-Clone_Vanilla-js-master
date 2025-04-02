@@ -26,17 +26,55 @@ A sleek and responsive Spotify clone built with vanilla JavaScript! 🚀
 
 ## 🚀 Getting Started
 
-1. Clone the repository:
+### Prerequisites
+- PostgreSQL installed and running
+- Node.js installed
+
+### Setup Instructions
+
+1. Set up the database:
 ```bash
-git clone https://github.com/yourusername/Spotify-Clone_Vanilla-js.git
+# Login to PostgreSQL
+psql -U postgres
+
+# Create a new database
+CREATE DATABASE spotify_clone;
+
+# Connect to the database
+\c spotify_clone
+
+# Run the schema.sql file
+\i server/schema.sql
 ```
 
-2. Navigate to the project directory:
+2. Install dependencies:
 ```bash
-cd Spotify-Clone_Vanilla-js
+# Navigate to the server directory
+cd server
+
+# Install dependencies
+npm install
 ```
 
-3. Open `index.html` in your browser or use a live server.
+3. Configure environment variables:
+Create a `.env` file in the server directory with:
+```
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=spotify_clone
+PORT=3000
+```
+
+4. Start the server:
+```bash
+npm start
+```
+
+5. Open the application:
+- Open `index.html` in your web browser
+- Or use a local development server like Live Server in VS Code
 
 ## 📁 Project Structure
 
@@ -51,6 +89,10 @@ cd Spotify-Clone_Vanilla-js
 │   ├── album1/
 │   ├── album2/
 │   └── ...
+├── 📂 server/
+│   ├── schema.sql
+│   ├── .env
+│   └── (server code files)
 └── 📄 index.html
 ```
 
