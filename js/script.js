@@ -18,7 +18,7 @@ function secondsToMinutesSeconds(seconds) {
 
 async function getSongs(albumId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/albums/${albumId}/songs`);
+        const response = await fetch(`${config.apiUrl}/api/albums/${albumId}/songs`);
         const songs = await response.json();
         console.log("Fetched songs:", songs);
         
@@ -77,7 +77,7 @@ const playMusic = (track, pause = false) => {
 async function displayAlbums() {
     try {
         console.log('Fetching albums...');
-        const response = await fetch('http://localhost:3000/api/albums');
+        const response = await fetch(`${config.apiUrl}/api/albums`);
         const albums = await response.json();
         console.log('Received albums:', albums);
         
