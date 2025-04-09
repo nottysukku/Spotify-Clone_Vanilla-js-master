@@ -1,3 +1,7 @@
+Here's the updated version with the additional hosting details:
+
+---
+
 # 🎵 Spotify Clone
 
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
@@ -23,6 +27,10 @@ A sleek and responsive Spotify clone built with vanilla JavaScript! 🚀
 - Vanilla JavaScript
 - SVG Icons
 - Local Storage API
+- PostgreSQL (hosted on Neon.Tech)
+- Node.js
+- Render (Backend hosting)
+- Netlify (Frontend hosting)
 
 ## 🚀 Getting Started
 
@@ -76,6 +84,12 @@ npm start
 - Open `index.html` in your web browser
 - Or use a local development server like Live Server in VS Code
 
+## 🌐 Hosting
+
+- **Backend Hosting**: The backend is hosted on [Render](https://render.com).
+- **Database Hosting**: PostgreSQL is hosted on [Neon.Tech](https://neon.tech), making database management seamless and scalable.
+- **Frontend Hosting**: The frontend is hosted on [Netlify](https://netlify.com) for fast, reliable, and automatic deployment.
+
 ## 📁 Project Structure
 
 ```
@@ -121,6 +135,6 @@ This project is open source and available under the [MIT License](LICENSE).
 ---
 Made with 💚 and JavaScript
 
+---
 
-
-
+Let me know if you'd like to add more details!
